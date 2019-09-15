@@ -1,4 +1,4 @@
-package com.torrent.messages.tracker;
+package com.torrent.messages.tracker.reponses;
 
 import com.torrent.utils.TorrentConstants;
 import org.apache.log4j.Logger;
@@ -29,8 +29,8 @@ public class TrackerConnectResponse extends GenericTrackerResponse {
         if(responseInBytes != null) {
             // validation 1
             boolean hasValidLength = validateResponseLength(responseInBytes.array().length);
-            boolean hasValidActionCode = false, hasValidTransactionId = false;
 
+            boolean hasValidActionCode = false, hasValidTransactionId = false;
             if(hasValidLength) {
                 // validation 2
                 hasValidActionCode = validateActionCode(responseInBytes.getInt());

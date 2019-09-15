@@ -1,5 +1,6 @@
-package com.torrent.messages.tracker;
+package com.torrent.messages.tracker.requests;
 
+import com.torrent.messages.tracker.requests.GenericTrackerRequest;
 import com.torrent.utils.TorrentConstants;
 import com.torrent.utils.TorrentUtils;
 

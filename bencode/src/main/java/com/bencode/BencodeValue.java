@@ -33,7 +33,7 @@ public class BencodeValue {
 
     /**
      * If the current type of value is dictionary, then return value corresponding to key k.
-     * Since we store strings as byte[], the string version of key passed by user is converted to byte array.
+     * Since we store strings as byte[], the string version of key is converted to byte array.
      * @param k the key for which value is to be returned
      * @return the value corresponding to key k
      * @throws InvalidClassException if the current value is not a dictionary

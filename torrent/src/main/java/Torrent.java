@@ -1,9 +1,9 @@
 import com.bencode.BencodeDecoder;
 import com.bencode.BencodeValue;
 import com.bencode.InvalidBencodingException;
+import com.torrent.client.peer.PeerConnectionHandler;
 import com.torrent.client.tracker.TrackerConnectionHandler;
 import com.torrent.utils.BlockingSet;
-import com.torrent.utils.TorrentConstants;
 import com.torrent.utils.TorrentContext;
 import com.torrent.utils.TorrentThreadPool;
 import org.apache.log4j.Logger;
@@ -12,19 +12,22 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.concurrent.Future;
 
-public class Torrent extends  Thread{
+public class Torrent extends Thread{
 
     private String torrentFileName;
     private TrackerConnectionHandler connectionHandler;
+    private PeerConnectionHandler peerConnectionHandler;
     private Logger LOGGER = Logger.getLogger(Torrent.class.getName());
-    private BlockingSet peerAddress;
+    private BlockingSet<InetSocketAddress> peerAddress;
 
     public Torrent(String torrentFileName) {
         this.torrentFileName = torrentFileName;
-        this.peerAddress = new BlockingSet();
+        this.peerAddress = new BlockingSet<>();
     }
 
     @Override
@@ -33,19 +36,15 @@ public class Torrent extends  Thread{
         if(this.torrentFileName != null) {
             try (FileInputStream fin = new FileInputStream(new File(this.torrentFileName))) {
                 BencodeDecoder decoder = new BencodeDecoder(fin);
-                HashMap<String, BencodeValue> torrentMetaInfo = (HashMap<String, BencodeValue>)decoder.decode().getValue();
-                initContext(torrentMetaInfo);
+
+                // the torrent file has bencoded dictionary structure
+                HashMap<String, BencodeValue> torrentMetaData = (HashMap<String, BencodeValue>)decoder.decode().getValue();
+                initContext(torrentMetaData);
                 this.connectionHandler = new TrackerConnectionHandler(TorrentContext.getContext());
                 LOGGER.debug("Runnable ::: " + this.connectionHandler);
-                getPeerInfoFromTracker();
-                String peers= "";
-                int count = 0;
-                do{
-                    peers = peers + this.peerAddress.take();
-                    count ++;
-                }while(this.peerAddress.size() != 0);
-                LOGGER.debug("PEERS: " + peers + " " + count);
-
+                Future<?> isTrackerComplete = getPeerInfoFromTracker();
+                this.peerConnectionHandler = new PeerConnectionHandler(TorrentContext.getContext(), isTrackerComplete);
+                connectAndStartDownloadFromPeers();
             } catch (FileNotFoundException e) {
                 LOGGER.error("File with given name does not exist");
                 e.printStackTrace();
@@ -63,19 +62,20 @@ public class Torrent extends  Thread{
         LOGGER.info("Torrent: start() execution end");
     }
 
-    private void getPeerInfoFromTracker() {
-        TorrentThreadPool.getThreadPool().execute(connectionHandler);
+    private void connectAndStartDownloadFromPeers() {
+        this.peerConnectionHandler.connectAndStartDownloadFromPeers();
     }
 
-    private void initContext(HashMap<String, BencodeValue> torrentMetaInfo) {
+    private Future<?> getPeerInfoFromTracker() {
+        return TorrentThreadPool.getThreadPool().submit(connectionHandler);
+    }
+
+    private void initContext(HashMap<String, BencodeValue> torrentMetaData) {
         TorrentContext context = TorrentContext.getContext();
-        for(String key: torrentMetaInfo.keySet()) {
-            context.addProperty(key, torrentMetaInfo.get(key));
+        for(String key: torrentMetaData.keySet()) {
+            context.addProperty(key, torrentMetaData.get(key));
         }
         context.addProperty("fileName", torrentFileName);
-        context.addProperty(TorrentConstants.PEER_ADDRESSES, this.peerAddress);
-        context.addProperty(TorrentConstants.LEECHERS, 0);
-        context.addProperty(TorrentConstants.SEEDERS, 0);
     }
 
     public static void main(String[] args) {

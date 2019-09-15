@@ -11,4 +11,5 @@ public class TorrentConstants {
     public static final String LEECHERS = "Leechers";
     public static final String PEER_ADDRESSES = "Peer-Addresses";
     public static final int TIMEOUT_LIMIT = (int) (15 * Math.pow(2,2));
+    public static final String PEER_ID = "Peer Id";
 }

@@ -1,4 +1,4 @@
-package com.torrent.messages.tracker;
+package com.torrent.messages.tracker.reponses;
 
 import com.torrent.utils.TorrentConstants;
 

@@ -10,15 +10,15 @@ public class TorrentContext {
 
     private TorrentContext() {
         this.contextMap = new HashMap<>();
+        this.contextMap.put(TorrentConstants.SEEDERS, 0);
+        this.contextMap.put(TorrentConstants.LEECHERS, 0);
+        this.contextMap.put(TorrentConstants.PEER_ADDRESSES, new BlockingSet<InetSocketAddress>());
     }
 
     public static synchronized TorrentContext getContext() {
         if(context == null) {
             context = ThreadLocal.withInitial(() -> new TorrentContext());
         }
-        context.get().addProperty(TorrentConstants.SEEDERS, 0);
-        context.get().addProperty(TorrentConstants.LEECHERS, 0);
-        context.get().addProperty(TorrentConstants.PEER_ADDRESSES, new HashSet<InetSocketAddress>());
         return context.get();
     }
 

@@ -1,6 +1,6 @@
 package com.torrent.utils;
 
-import com.torrent.messages.tracker.GenericTrackerRequest;
+import com.torrent.messages.tracker.requests.GenericTrackerRequest;
 
 public class PrevRequestAndNextTimeoutWrapper {
     private GenericTrackerRequest lastRequest;

@@ -1,11 +1,14 @@
-package com.torrent.messages.tracker;
+package com.torrent.messages.tracker.reponses;
 
+import com.torrent.messages.GenericResponse;
+import com.torrent.messages.tracker.GenericTrackerMessage;
+import com.torrent.messages.tracker.requests.GenericTrackerRequest;
 import com.torrent.utils.TorrentConstants;
 
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
-public abstract class GenericTrackerResponse extends GenericTrackerMessage {
+public abstract class GenericTrackerResponse extends GenericTrackerMessage implements GenericResponse {
 
     public GenericTrackerResponse() {
         super(0,0);
@@ -45,6 +48,4 @@ public abstract class GenericTrackerResponse extends GenericTrackerMessage {
         }
         return response;
     }
-
-    public abstract void parseResponse(ByteBuffer data) throws UnknownHostException;
 }

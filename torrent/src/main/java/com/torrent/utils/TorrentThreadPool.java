@@ -22,4 +22,6 @@ public class TorrentThreadPool {
     public synchronized void execute(Runnable task) {
         threadPool.execute(task);
     }
+
+    public synchronized Future<?> submit(Runnable task) { return threadPool.submit(task); }
 }

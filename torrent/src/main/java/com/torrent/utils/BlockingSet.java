@@ -1,15 +1,15 @@
 package com.torrent.utils;
 
-import java.net.InetSocketAddress;
 import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class BlockingSet extends LinkedBlockingQueue<InetSocketAddress> {
-    private Set<InetSocketAddress> set = new ConcurrentHashMap().newKeySet();
+public class BlockingSet<T> extends LinkedBlockingQueue<T> {
+    private Set<T> set = new ConcurrentHashMap().newKeySet();
+
     @Override
-    public boolean add(InetSocketAddress address) {
+    public boolean add(T address) {
         if(!set.contains(address)) {
             try {
                 super.put(address);
@@ -23,8 +23,8 @@ public class BlockingSet extends LinkedBlockingQueue<InetSocketAddress> {
     }
 
     @Override
-    public InetSocketAddress take() {
-        InetSocketAddress frontAddr = null;
+    public T take() {
+        T frontAddr = null;
         try {
             frontAddr = super.take();
         } catch (InterruptedException e) {
@@ -35,8 +35,17 @@ public class BlockingSet extends LinkedBlockingQueue<InetSocketAddress> {
     }
 
     @Override
-    public boolean addAll(Collection<? extends InetSocketAddress> collection) {
-        for(InetSocketAddress addr: collection) {
+    public T poll(int timeout) {
+        T frontAddr = super.poll();
+        if(frontAddr != null) {
+            set.remove(frontAddr);
+        }
+        return frontAddr;
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends T> collection) {
+        for(T addr: collection) {
             this.add(addr);
         }
         return true;

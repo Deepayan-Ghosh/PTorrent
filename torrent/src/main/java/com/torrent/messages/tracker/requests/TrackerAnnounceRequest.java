@@ -1,4 +1,4 @@
-package com.torrent.messages.tracker;
+package com.torrent.messages.tracker.requests;
 
 import com.bencode.BencodeEncoder;
 import com.bencode.BencodeValue;
@@ -45,7 +45,7 @@ public class TrackerAnnounceRequest extends GenericTrackerRequest {
         try {
             this.infoHash = calculateInfoHash(info);
             this.peerId = calculatePeerId();
-            this.left = calculateLeftField((BencodeValue) this.context.getProperty("info"));
+            this.left = calculateLeftField(info);
 
         } catch (IOException e) {
             LOGGER.severe("Error while calculating info-hash");
@@ -108,6 +108,10 @@ public class TrackerAnnounceRequest extends GenericTrackerRequest {
         buffer.putInt(92,this.numWant);
         buffer.putShort(96,this.port);
         return buffer;
+    }
+
+    public byte[] getPeerId() {
+        return peerId;
     }
 
     @Override
