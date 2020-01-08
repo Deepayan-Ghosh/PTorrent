@@ -34,7 +34,6 @@ public class BlockingSet<T> extends LinkedBlockingQueue<T> {
         return frontAddr;
     }
 
-    @Override
     public T poll(int timeout) {
         T frontAddr = super.poll();
         if(frontAddr != null) {

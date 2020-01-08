@@ -18,7 +18,7 @@ public abstract class GenericTrackerResponse extends GenericTrackerMessage imple
         super(action, transactionId);
     }
 
-    public final static GenericTrackerResponse parseResponseUtil(ByteBuffer responseInBytes, GenericTrackerRequest lastRequest) throws UnknownHostException {
+    public final static GenericTrackerResponse parseResponseUtil(final ByteBuffer responseInBytes, final GenericTrackerRequest lastRequest) throws UnknownHostException {
         GenericTrackerResponse response = null;
         if(responseInBytes != null && responseInBytes.array().length > 0) {
 

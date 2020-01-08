@@ -159,7 +159,7 @@ public class TrackerConnectionHandler implements Runnable {
     /**
      * For currSecond, selects all the channels to which requests are to be sent
      * If timeout is within limit, then
-     *      get the last sent request which, if present, denotes that this channel has been processed once, or it is an announce request
+     *      get the last sent request which, if present, denotes that this channel has been processed once that is retransmission, or it is an announce request
      *      If absent, then this channel is being processed for first time and first request is connect request.
      * @param currSecond
      * @throws IOException

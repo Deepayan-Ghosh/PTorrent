@@ -23,7 +23,7 @@ public class TrackerConnectResponse extends GenericTrackerResponse {
         this.connectionId = buffer.getLong(8);
     }
 
-    public static boolean validateResponse(Object ... validationParams) {
+    public static boolean validateResponse(final Object ... validationParams) {
         ByteBuffer responseInBytes = (ByteBuffer) validationParams[0];
         int expectedTransactionId = Integer.parseInt(validationParams[1].toString());
         if(responseInBytes != null) {
